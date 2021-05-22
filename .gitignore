@@ -1,0 +1,12 @@
+ExampleMatlabCode/
+*.aux
+*.bbl
+*.bcf
+*.blg
+*.fdb_latexmk
+*.fls
+*.log
+*.run.xml
+*.synctex.gz
+__pycache__/
+*.pyc
