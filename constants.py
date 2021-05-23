@@ -14,8 +14,15 @@ UPSAMPLED_SAMPLE_PERIOD = 1 / UPSAMPLED_SAMPLE_RATE
 PAM4_SYMBOLS = {
     (0, 0): -3,
     (0, 1): -1,
-    (1, 1): 1,
-    (1, 0): 3
+    (1, 1): +1,
+    (1, 0): +3
+}
+
+PAM4_REVERSE_SYMBOLS = {
+    -3: (0, 0),
+    -1: (0, 1),
+    +1: (1, 1),
+    +3: (1, 0)
 }
 
 RRCOS_FILTER = commpy.filters.rrcosfilter(

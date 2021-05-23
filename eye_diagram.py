@@ -1,5 +1,6 @@
 import numpy as np
 import matplotlib.pyplot as plt
+
 from baseband_tx import *
 
 
@@ -23,8 +24,8 @@ def plot_bit_modulation(ax, bits, channel_func):
     modulated = get_modulation(bits, channel_func)
     t = np.linspace(0, len(modulated) *
                     UPSAMPLED_SAMPLE_PERIOD, len(modulated))
-    return ax.plot(t[UPSAMPLE_AMOUNT:-UPSAMPLE_AMOUNT],
-                   modulated[UPSAMPLE_AMOUNT:-UPSAMPLE_AMOUNT], "C0")[0]
+    display_slice = slice(UPSAMPLE_AMOUNT, -UPSAMPLE_AMOUNT)
+    return ax.plot(t[display_slice], modulated[display_slice], "C0")[0]
 
 
 def plot_eye_diagram_with_channel(channel_func, repeats=1):

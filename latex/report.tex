@@ -154,35 +154,55 @@ to `close' more than in the perfect channel case.
 To simulate this, the noise power needs to be calculated. The average energy per
 symbol can be calculated as follows, where $E_p$ is the energy of a pulse.
 \begin{equation}
-    \begin{gathered}
-        E_s = \frac{E_p (4^2-1)}{3}\\
-        E_p = \int_{-\infty}^{\infty} |p(t)|^2 dt
-    \end{gathered}
+    E_p = \int_{-\infty}^{\infty} |p(t)|^2 \,dt
 \end{equation}
-The signal energy of the root-raised-cosine pulse shaping filter is 1, meaning
-the energy per symbol is 5. We can derive the noise power spectral density,
-$N_0$ by relating the symbol energy to bit energy:
+Given a value for $\frac{E_b}{N_0}$, the value for $N_0$ can be calculated as follows:
 \begin{equation}
-    \begin{gathered}
-        \frac{E_s}{N_0} = 2 \frac{E_b}{N_0} = 20^{\left( \frac{ (E_b/N_0)_{dB} }
-                    {10} \right)} = 20^1 = 20\\
-        N_0 = \frac{E_s}{20} = 0.25
-    \end{gathered}
+    N_0 = \left(\frac{E_b}{N_0} \right)^{-1} E_b
 \end{equation}
-In the simulation, oversampling is also compensated for by dividing the noise
-power by the oversampling factor.
-
-To generate the noise, samples were taken from a Gaussian distribution with a variance of
-\begin{equation}
-    \sigma^2 = \frac{N_0}{2\alpha} \int_{-\infty}^{\infty} |p(t)|^2 dt
-\end{equation}
-where $\alpha$ is the oversampling factor.
+For the filter selected in the baseband receiver simulation, the energy is
+normalized such that $E_b = 1$. To generate noise to add to the channel, $N_0$
+was used as the variance of a randomly sampled gaussian variable. The standard
+deviation is given by $\sqrt{N_0}$. AWGN always has a mean $\mu = 0$.
 
 \begin{figure}[H]
     \centering
     \scalebox{0.7}{\input{plots/awgn_eye_diagram.pgf}}
-    \caption{Eye diagram with $\frac{E_b}{N_0}$ of $10dB$}
+    \caption{Eye diagram with AWGN, $\frac{E_b}{N_0} = 10dB$}
 \end{figure}
 
 \section{4-PAM Detector}
+To produce a 4-PAM thresholding detector, thresholds were chosen at $\{-2, 0,
+    2\}$. These thresholds are in the midpoint between symbol signal levels. This
+was chosen because AWGN causes symbol errors at the same rate irregardless of
+which symbol is being transmitted. The detector samples at the ideal sampling
+instant.
+
+
+The detector was run with AWGN in the channel for a variety of $\frac{E_b}{N_0}$ values. Theoretical error rate was calculated using
+\begin{equation}
+    R_e = Q\left( \sqrt{2 \frac{E_b}{N_0}}\right)
+\end{equation}
+
+\begin{figure}[H]
+    \centering
+    \scalebox{0.7}{\input{plots/error_rate.pgf}}
+    \caption{Bit error rate for simulated channel\label{error}}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \scalebox{0.7}{\input{plots/error_rate_log.pgf}}
+    \caption{Bit error rate for simulated channel, log Y axis\label{errorlog}}
+\end{figure}
+
+As shown in \Cref{error}, the bit error rate is nearly zero for higher values of
+$\frac{E_b}{N_0}$. This is very apparent in \Cref{errorlog}, where the error
+rate is zero and therefor undefined/$-\infty$ on a log scale. The SNR of these
+data points is high enough that not a single bit error occurs in the 10000
+simulated bits. In order to predict the BER for these values of
+$\frac{E_b}{N_0}$, a much longer bit stream would need to be simulated to
+trigger enough bit errors to get a good statistical sample.
+
+\section{ISI and Equalization}
 \end{document}
