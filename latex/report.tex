@@ -19,11 +19,6 @@
 \usepackage{tabularx}
 \usepackage{pgf}
 
-\usepackage{pgfplots}
-\pgfplotsset{compat=newest}
-\pgfplotsset{plot coordinates/math parser=false}
-\newlength\figureheight
-\newlength\figurewidth 
 
 \renewcommand{\thesection}{\Alph{section}}
 \renewcommand{\thesubsection}{(\roman{subsection})}
@@ -211,70 +206,122 @@ $\frac{E_b}{N_0}$, a much longer bit stream would need to be simulated to
 trigger enough bit errors to get a good statistical sample.
 
 \section{ISI and Equalization}
-\begin{equation}
+\begin{equation}\label{ysum}
     y[i] = \sum_{k=-\infty}^{\infty}  a_k h[i-k]+w[i]
 \end{equation}
 The sampled receiver output $y[i]$ is the sum over all transmitted symbols $a_k$
 multiplied by the effective channel filter at the offset of each symbol. This
 models ISI because the recieved sample may be influenced by other transmitted
 samples ($a_k$) if the impulse response of the effective channel filter at that
-symbol ($h[i-k]$) is large.
+symbol ($h[i-k]$) is nonzero.
 
-\begin{equation}
+\begin{equation}\label{autocorr_exp}
     R_y[m] \triangleq E\left[ y[i+m] y^*[i]\right]
 \end{equation}
+For a wide sense stationary process, the autocorrelation of a signal is the
+expected value of the random variable times it's conjugate. This is due to
+autocorrelation effectively being a time delayed sum, which is a realization of
+an average/mean, giving the expected value definition.
 
-\begin{equation}
+\begin{equation}\label{bigsum}
     R_y[m] = E \left[ \left( \sum_k a_k h[i+m-k]+w[i+m] \right) \left( \sum_j
         a_j^* h^*[i-j]+w^*[i] \right) \right]
 \end{equation}
+Plugging \Cref{ysum} into \Cref{autocorr_exp}.
 
-\begin{equation}
+\begin{equation}\label{symbol_ea}
     E[a_k a_j^*] =
     \begin{cases}
         E_a & j=k      \\
         0   & j \neq k
     \end{cases}
 \end{equation}
+This case is discussed in \Cref{rect_psd_section}. For any combination of
+different symbols, there are an equal number of positive and negative results,
+due to the symbol levels being spread around zero. Because of this, the mean
+(expected value) of two disjoint symbols is zero. If a symbol is multiplied with
+the conjugate of itself (equivalent to $|a_k|^2$), its expected value will be
+the average of the squares of the symbol levels, represented here as $E_a$.
 
-\begin{equation}
+\begin{equation} \label{enoise_zero}
     E\left[a_k w^*[i]\right]= 0
 \end{equation}
+The expected value of AWGN $w^*[i]$ is $0$. Since the signals $a_k$ and $w^*[i]$
+are statistically independent, $E\left[a_k w^*[i]\right]$ can be rewritten as
+$E[a_k]E[w^*[i]] = E[a_k]\cdot 0 = 0$
 
-\begin{equation}
+\begin{equation}\label{noise_e}
     E \left[w[l]w^*[i]\right] =
     \begin{cases}
         \sigma^2_w = \frac{N_0}{2} & l = i    \\
         0                          & l \neq i
     \end{cases}
 \end{equation}
+Two samples of AWGN are independent. The expected value of any AWGN sample
+$E[w[l]] = 0$. If two different samples are multiplied, the expected value will
+also be zero ($E[xy] = E[x]E[y]$ for independent variables), hence
+$E[w[l]w^*[i]] = 0$ for $l \neq i$. For a single sample ($l = i$), the expected
+value is the energy of the noise $\frac{N_0}{2}$, which is also the variance of
+the noise's gaussian distribution $\sigma_w^2$.
+
+\begin{equation}
+    R_y[m] = E\left[ \left( \sum_k a_k h[i+m-k] + \sum_k w[i+m] \right) \left(
+        \sum_j a_j^* h^*[i-j] + \sum_j w^*[i] \right) \right]
+\end{equation}
+Distribute sum operators from \Cref{bigsum}.
+
+\begin{align}
+    \begin{split}
+        R_y[m] = & \\
+        & E\left[ \sum_k a_k h[i+m-k] \sum_j a_j^* h^*[i-j] \right] + \\
+        & E\left[ \sum_k a_k h[i+m-k] \sum_j w^*[i] \right] +         \\
+        & E\left[ \sum_k w[i+m] \sum_j a_j^* h^*[i-j] \right] +       \\
+        & E\left[ \sum_k w[i+m] \sum_j w^*[i] \right]
+    \end{split}
+\end{align}
+Multilply the two binomials.
+
+\begin{equation}
+    R_y[m] = E\left[ \sum_k a_k h[i+m-k] \sum_j a_j^* h^*[i-j] \right] + E\left[
+        \sum_k w[i+m] \sum_j w^*[i] \right]
+\end{equation}
+Using the \Cref{enoise_zero}, we are able to eliminate the second and third
+terms, since they include an expected value for the AWGN, which is zero.
 
 \begin{equation}
     \therefore R_y[m] = \sum_k E_a h[i+m-k]h^*[i-k]+\frac{N_0}{2}\delta[m]
 \end{equation}
+Using \Cref{symbol_ea}, the expected value of the product $a_k a_j^*$ is equal
+to $E_a$. Using \Cref{noise_e}, the expected value of the product $w[i+m]w^*[i]$
+is zero except for when $j = k$, ie.  at the sample $m$, when it is
+$\frac{N_0}{2}$. This can be represented by a delta function at time $m$. The
+filter coefficients $h[x]$ and $h^*[x]$ are left intact.
 
 \begin{equation}
     R_y[m] = E_a \sum_j h[m+j]h^*[j]+\frac{N_0}{2}\delta[m]
 \end{equation}
+Pull $E_a$ out of the sum, and set $j = i - k$ as the sum iterator.
 
 \section{MMSE equaliser simulation}
 
+\subsection{MATLAB plots}
 \begin{figure}[H]
     \centering
     \includegraphics[width=0.8\textwidth]{plots/multipath_eye.eps}
-    \caption{Eye diagram without equaliser}
+    \caption{Eye diagram without equaliser\label{badeye}}
 \end{figure}
 
 \begin{figure}[H]
     \centering
     \includegraphics[width=0.8\textwidth]{plots/symbol_error_eq.eps}
-    \caption{Symbol error probability with and without equaliser}
+    \caption{Symbol error probability with and without equaliser\label{eq_err}}
 \end{figure}
 
 \begin{figure}[H]
     \centering
     \includegraphics[width=0.8\textwidth]{plots/constellation_eq.eps}
-    \caption{Signal amplitude levels (constellation) with and without equaliser}
+    \caption{Signal amplitude levels (constellation) with and without
+        equaliser\label{constellation}}
 \end{figure}
 
 \begin{figure}[H]
@@ -283,6 +330,19 @@ symbol ($h[i-k]$) is large.
     \caption{Impulse response of multipath channel}
 \end{figure}
 
+\subsection{Analysis}
+Equalization can greatly improve the performance of a communication system.
+Prior to use of an equalizer, the `eye' is completely closed as shown in
+\Cref{badeye}. There is no margin over noise. After equalization, a larger
+margin over noise is produced, meaning the eye is `open' and signals can be
+decoded with an error rate less than 100\%. This difference can be shown in the
+constellations in \Cref{constellation}, with gaps showing margin over noise only
+appearing after equalization.
+
+Due to there being zero margin over noise prior to equalization, the receiver is
+effectively sampling nothing but ISI noise. Because of this, the error rate is a
+flat 60\% for all SNRs, illustrated by the `without equalizer' plot in
+\Cref{eq_err}.
 
 
 
@@ -346,5 +406,16 @@ level. It shows the clock stability of the transmitter or phase distortion in
 the transmission medium. Measured at 120us.
 
 \subsection{Sensitivity of signal to timing error}
+The error free sampling interval (260us) is a large proportion (approximately
+70\%) of the entire symbol period (376us). Because of this, errors in timing
+will be tolerated well, provided the timing error is not cumulative. If the
+timing error is purely a phase error, a wide range of errors will be tolerated.
+If the timing error is a sampling frequency error (ie. desynchronization of
+local oscillators), the symbols will become corrupted as the RX sampling
+oscillator moves out of the 260us window.
 
+An eye diagram with a large error free sampling period may signify the signal
+has not been band limited inside the bandwidth of the original TX pulse shape.
+Since the measured signal exhibits this characteristic, it has not been band
+limited.
 \end{document}
