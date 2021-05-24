@@ -42,6 +42,10 @@ def plot_baseband_tx():
     ax.grid()
 
 
-if __name__ == "__main__":
+def main():
     plot_baseband_tx()
+
+
+if __name__ == "__main__":
+    main()
     plt.show()

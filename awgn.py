@@ -38,6 +38,10 @@ def plot_awgn_eye_diagram():
     plot_eye_diagram_with_channel(gen_noisy_channel(10), 1)
 
 
-if __name__ == "__main__":
+def main():
     plot_awgn_eye_diagram()
+
+
+if __name__ == "__main__":
+    main()
     plt.show()

@@ -93,7 +93,11 @@ def plot_error_rate_log():
     plt.yscale("log")
 
 
-if __name__ == "__main__":
+def main():
     plot_error_rate()
     plot_error_rate_log()
+
+
+if __name__ == "__main__":
+    main()
     plt.show()

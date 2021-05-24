@@ -38,7 +38,8 @@ RRCOS_FILTER = commpy.filters.rrcosfilter(
 # Convolve the rrcos filter with itself to produce a raised cosine filter
 RCOS_FILTER = np.convolve(RRCOS_FILTER, RRCOS_FILTER, mode="same")
 
-if __name__ == "__main__":
+
+def main():
     # Plot impulse responses of rrcos and rcos
     plt.figure()
     plt.plot(RRCOS_FILTER)
@@ -50,4 +51,7 @@ if __name__ == "__main__":
     plt.grid()
     plt.title("Raised cosine impulse")
 
+
+if __name__ == "__main__":
+    main()
     plt.show()

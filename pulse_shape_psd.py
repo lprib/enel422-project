@@ -33,6 +33,10 @@ def plot_rcos_psd():
     ax.grid()
 
 
-if __name__ == "__main__":
+def main():
     plot_rcos_psd()
+
+
+if __name__ == "__main__":
+    main()
     plt.show()

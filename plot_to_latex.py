@@ -30,10 +30,14 @@ def save_plot(function):
     plt.savefig(f"latex/plots/{plot_name}.pgf")
 
 
-if __name__ == "__main__":
+def main():
     save_plot(plot_rcos_psd)
     save_plot(plot_baseband_tx)
     save_plot(plot_eye_diagram)
     save_plot(plot_awgn_eye_diagram)
     save_plot(plot_error_rate)
     save_plot(plot_error_rate_log)
+
+
+if __name__ == "__main__":
+    main()
