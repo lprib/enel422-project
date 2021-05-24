@@ -10,3 +10,4 @@ ExampleMatlabCode/
 *.synctex.gz
 __pycache__/
 *.pyc
+*eps-converted-to.pdf

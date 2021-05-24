@@ -19,6 +19,12 @@
 \usepackage{tabularx}
 \usepackage{pgf}
 
+\usepackage{pgfplots}
+\pgfplotsset{compat=newest}
+\pgfplotsset{plot coordinates/math parser=false}
+\newlength\figureheight
+\newlength\figurewidth 
+
 \renewcommand{\thesection}{\Alph{section}}
 \renewcommand{\thesubsection}{(\roman{subsection})}
 
@@ -252,6 +258,34 @@ symbol ($h[i-k]$) is large.
 \end{equation}
 
 \section{MMSE equaliser simulation}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.8\textwidth]{plots/multipath_eye.eps}
+    \caption{Eye diagram without equaliser}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.8\textwidth]{plots/symbol_error_eq.eps}
+    \caption{Symbol error probability with and without equaliser}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.8\textwidth]{plots/constellation_eq.eps}
+    \caption{Signal amplitude levels (constellation) with and without equaliser}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.8\textwidth]{plots/channel_impulse.eps}
+    \caption{Impulse response of multipath channel}
+\end{figure}
+
+
+
+
 \section{Lab Exercise}
 \begin{figure}[H]
     \centering
