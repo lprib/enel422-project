@@ -1,6 +1,7 @@
 import math
 import commpy.filters
 import numpy as np
+import matplotlib.pyplot as plt
 
 BIT_RATE = 1_500_000
 BITS_PER_SYMBOL = 2
@@ -33,3 +34,16 @@ RRCOS_FILTER = commpy.filters.rrcosfilter(
 )[1] / math.sqrt(UPSAMPLE_AMOUNT)
 
 RCOS_FILTER = np.convolve(RRCOS_FILTER, RRCOS_FILTER, mode="same")
+
+if __name__ == "__main__":
+    plt.figure()
+    plt.plot(RRCOS_FILTER)
+    plt.grid()
+    plt.title("Root raised cosine impulse")
+
+    plt.figure()
+    plt.plot(RCOS_FILTER)
+    plt.grid()
+    plt.title("Raised cosine impulse")
+
+    plt.show()

@@ -4,6 +4,7 @@
 \DeclareUnicodeCharacter{2212}{\textendash}
 \usepackage[top=2cm, bottom=2cm]{geometry}
 \usepackage{amsmath}
+\usepackage{amssymb}
 \usepackage{graphicx}
 \usepackage{textcomp}
 \usepackage{gensymb}
@@ -20,11 +21,8 @@
 
 \renewcommand{\thesection}{\Alph{section}}
 \renewcommand{\thesubsection}{(\roman{subsection})}
-\title{my report}
-\author{Liam Pribis 81326643}
-\date{24 May 2021}
-\begin{document}
 
+\begin{document}
 \input{titlepage.tex}
 \newpage
 \section{Modulation type feasibility}
@@ -156,7 +154,8 @@ symbol can be calculated as follows, where $E_p$ is the energy of a pulse.
 \begin{equation}
     E_p = \int_{-\infty}^{\infty} |p(t)|^2 \,dt
 \end{equation}
-Given a value for $\frac{E_b}{N_0}$, the value for $N_0$ can be calculated as follows:
+Given a value for $\frac{E_b}{N_0}$, the value for $N_0$ can be calculated as
+follows:
 \begin{equation}
     N_0 = \left(\frac{E_b}{N_0} \right)^{-1} E_b
 \end{equation}
@@ -173,13 +172,14 @@ deviation is given by $\sqrt{N_0}$. AWGN always has a mean $\mu = 0$.
 
 \section{4-PAM Detector}
 To produce a 4-PAM thresholding detector, thresholds were chosen at $\{-2, 0,
-    2\}$. These thresholds are in the midpoint between symbol signal levels. This
-was chosen because AWGN causes symbol errors at the same rate irregardless of
-which symbol is being transmitted. The detector samples at the ideal sampling
+    2\}$. These thresholds are in the midpoint between symbol signal levels.
+This was chosen because AWGN causes symbol errors at the same rate irregardless
+of which symbol is being transmitted. The detector samples at the ideal sampling
 instant.
 
 
-The detector was run with AWGN in the channel for a variety of $\frac{E_b}{N_0}$ values. Theoretical error rate was calculated using
+The detector was run with AWGN in the channel for a variety of $\frac{E_b}{N_0}$
+values. Theoretical error rate was calculated using
 \begin{equation}
     R_e = Q\left( \sqrt{2 \frac{E_b}{N_0}}\right)
 \end{equation}
@@ -205,4 +205,112 @@ $\frac{E_b}{N_0}$, a much longer bit stream would need to be simulated to
 trigger enough bit errors to get a good statistical sample.
 
 \section{ISI and Equalization}
+\begin{equation}
+    y[i] = \sum_{k=-\infty}^{\infty}  a_k h[i-k]+w[i]
+\end{equation}
+The sampled receiver output $y[i]$ is the sum over all transmitted symbols $a_k$
+multiplied by the effective channel filter at the offset of each symbol. This
+models ISI because the recieved sample may be influenced by other transmitted
+samples ($a_k$) if the impulse response of the effective channel filter at that
+symbol ($h[i-k]$) is large.
+
+\begin{equation}
+    R_y[m] \triangleq E\left[ y[i+m] y^*[i]\right]
+\end{equation}
+
+\begin{equation}
+    R_y[m] = E \left[ \left( \sum_k a_k h[i+m-k]+w[i+m] \right) \left( \sum_j
+        a_j^* h^*[i-j]+w^*[i] \right) \right]
+\end{equation}
+
+\begin{equation}
+    E[a_k a_j^*] =
+    \begin{cases}
+        E_a & j=k      \\
+        0   & j \neq k
+    \end{cases}
+\end{equation}
+
+\begin{equation}
+    E\left[a_k w^*[i]\right]= 0
+\end{equation}
+
+\begin{equation}
+    E \left[w[l]w^*[i]\right] =
+    \begin{cases}
+        \sigma^2_w = \frac{N_0}{2} & l = i    \\
+        0                          & l \neq i
+    \end{cases}
+\end{equation}
+
+\begin{equation}
+    \therefore R_y[m] = \sum_k E_a h[i+m-k]h^*[i-k]+\frac{N_0}{2}\delta[m]
+\end{equation}
+
+\begin{equation}
+    R_y[m] = E_a \sum_j h[m+j]h^*[j]+\frac{N_0}{2}\delta[m]
+\end{equation}
+
+\section{MMSE equaliser simulation}
+\section{Lab Exercise}
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.8\textwidth]{scope.png}
+    \caption{Oscilloscope output for signal generator \textbf{A}\label{scope}}
+\end{figure}
+\subsection{Steps required to generate image}
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.8\textwidth]{scope_setup.png}
+    \caption{Experiment setup}
+\end{figure}
+These steps can be used to generate an eye diagram on a generic digital storage
+oscilloscope:
+\begin{enumerate}
+    \item Connect the signal and clock outputs of the signal generator to two
+          input channels of the oscilloscope.
+    \item Set the trigger of the oscilloscope to use the clock channel.
+    \item Adjust the trigger level to approximately half of the maximum
+          amplitude of the clock signal, about 2.5V in this case. Any trigger
+          level such that the refresh is only triggered on the edge of a pulse
+          will work (ie. not above the max amplitude but not below the noise
+          threshold of a clock `0' output).
+    \item Adjust the horizontal scaling factor of the oscilloscope such that
+          about three clock pulses are visible in the oscilloscope output
+          window.
+    \item Adjust the vertical scaling of both the signal and clock waveforms so
+          main features are visible and large enough to measure using the volts
+          per division and grid.
+    \item Turn the persistence of the oscilloscope to maximum ($\infty$)
+    \item If the image needs to be adjusted (scaled or horizontally offset), the
+          persistence must be cleared.
+\end{enumerate}
+
+\subsection{Modulation type}
+As shown in \Cref{scope}, the signal output shows four main levels at the eye
+open instant. These are levels of voltage (signal \textit{amplitude}). Because
+of this, the modulation type is 4-PAM.
+
+\subsection{Signal characteristics}
+\paragraph{Symbol rate}
+The symbol rate is the frequency at which symbols are transmitted, which can be
+found by the reciprocal of the time between clock pulses. Measured at 2.66KHz.
+\paragraph{Error free sampling interval}
+The error free sampling interval is the horizontal distance between the
+left-most and right-most corners of the eye. In this interval, the signal has
+settled in to one of the threshold regions for symbol decoding and will be
+correctly decoded. Measured at 260us.
+\paragraph{Margin over noise}
+Noise margin is the voltage difference between a threshold (the horizontal axis
+of the eye) and the maximum value of a noisy signal at the widest opening point
+of the eye. If the signal were to be distorted by more than this margin, it
+would cause a bit error even with if the sampling instant was chosen optimally.
+Measured at 200mV.
+\paragraph{Level crossing timing jitter}
+Level crossing jitter is the variation in when signals cross the threshold
+level. It shows the clock stability of the transmitter or phase distortion in
+the transmission medium. Measured at 120us.
+
+\subsection{Sensitivity of signal to timing error}
+
 \end{document}
