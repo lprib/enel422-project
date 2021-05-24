@@ -5,6 +5,7 @@ from constants import *
 
 
 def rcos_freq_response(f, alpha, bandwidth):
+    """ Transcribe peicewise function from lecture notes """
     w = 0.5 * bandwidth
     f1 = w * (1 - alpha)
     f = abs(f)

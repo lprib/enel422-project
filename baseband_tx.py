@@ -5,10 +5,15 @@ from constants import *
 
 
 def bits_to_symbols(bits):
+    """ Convert an even length bit stream to symbol stream """
     return np.array([PAM4_SYMBOLS[x] for x in (tuple(x) for x in np.split(bits, len(bits) / 2))])
 
 
 def upsample(symbs, amount, prepend_zeros=True):
+    """
+    Upsample `symbs` by `amount`.
+    If `prepend_zeros`, add a `amount` zeros at the start to pre-fill FIRs
+    """
     if prepend_zeros:
         upsampled = np.zeros((len(symbs) + 1) * amount)
         upsampled[amount::amount] = symbs

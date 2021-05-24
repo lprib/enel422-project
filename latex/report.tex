@@ -27,6 +27,7 @@
 \input{titlepage.tex}
 \newpage
 \section{Modulation type feasibility}
+
 \section{Power spectral density of 4-PAM}\label{rect_psd_section}
 The power spectral density of a pulse-shaped data sequence is given by the
 energy spectral density of the pulse shape multiplied by power spectral density
@@ -279,7 +280,7 @@ Distribute sum operators from \Cref{bigsum}.
         & E\left[ \sum_k w[i+m] \sum_j w^*[i] \right]
     \end{split}
 \end{align}
-Multilply the two binomials.
+Multilply the two binomials and distribute the expected value operation.
 
 \begin{equation}
     R_y[m] = E\left[ \sum_k a_k h[i+m-k] \sum_j a_j^* h^*[i-j] \right] + E\left[

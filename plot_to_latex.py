@@ -7,6 +7,9 @@ from eye_diagram import plot_eye_diagram
 from awgn import plot_awgn_eye_diagram
 from baseband_rx import plot_error_rate, plot_error_rate_log
 
+# Run all plot_x functions and save their output to a .pgf file for importing
+# into LaTeX.  Each plot_x will be saved as x.pgf
+
 
 def setup_latex_plotting():
     matplotlib.use("pgf")
@@ -19,6 +22,7 @@ def setup_latex_plotting():
 
 
 def save_plot(function):
+    # Strip "plot_" from the start of the function name and use as filename
     func_name = function.__name__
     plot_name = func_name[func_name.index("_") + 1:]
 

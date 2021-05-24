@@ -9,6 +9,7 @@ from awgn import *
 
 
 def threshold_detector(val):
+    """ Takes a sampled symbol value and converts it to two bits """
     if val > 2:
         return PAM4_REVERSE_SYMBOLS[3]
     elif val <= 2 and val > 0:
@@ -20,10 +21,12 @@ def threshold_detector(val):
 
 
 def threshold_detector_opt(val):
+    """ Same as `threshold_detector`, but more optimized """
     return (val >= 0, val <= 2 and val >= -2)
 
 
 def demod(modulated):
+    """ Sample `modulated` and decode the symbols to bits """
     bits = []
     for sample in modulated[UPSAMPLE_AMOUNT::UPSAMPLE_AMOUNT]:
         symbol = threshold_detector_opt(sample)
@@ -32,20 +35,27 @@ def demod(modulated):
 
 
 def error_rate(tx_bits, eb_n0):
+    """ Find the error rate for the given transmission bit sequence and SNR """
     modulated = get_modulation(tx_bits, gen_noisy_channel(eb_n0))
     rx_bits = demod(modulated)
     return (tx_bits != rx_bits).sum() / len(rx_bits)
 
 
 def q(n):
+    """ Gaussian Q function """
     return 0.5 - 0.5 * scipy.special.erf(n / np.sqrt(2))
 
 
 def theoretical_error(eb_n0):
+    """ Calculate theoretical error rate for a 4-PAM channel with given SNR """
     return q(np.sqrt(2*eb_n0))
 
 
 def plot_single_error_rate(eb_n0s):
+    """
+    Generate a 10000 random bits and send through a AWGN channel, outputting
+    error rate.
+    """
     tx_bits = np.random.randint(0, 2, 10000)
     error_rates = []
     for eb_n0 in eb_n0s:
@@ -55,6 +65,10 @@ def plot_single_error_rate(eb_n0s):
 
 
 def plot_error_rate():
+    """
+    Run the error rate simulation multiple times and plot with theoretical error
+    rate
+    """
     eb_n0s = np.logspace(0, np.log2(10), 20, base=2)
 
     measured_error_rate_artist = None
