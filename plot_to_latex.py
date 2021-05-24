@@ -26,6 +26,8 @@ def save_plot(function):
     func_name = function.__name__
     plot_name = func_name[func_name.index("_") + 1:]
 
+    print(f"Saving {plot_name}")
+
     function()
     plt.savefig(f"latex/plots/{plot_name}.pgf")
 

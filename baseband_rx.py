@@ -34,11 +34,11 @@ def demod(modulated):
     return bits
 
 
-def error_rate(tx_bits, eb_n0):
+def error_rate(tx_bits, eb_n0, pad_size):
     """ Find the error rate for the given transmission bit sequence and SNR """
     modulated = get_modulation(tx_bits, gen_noisy_channel(eb_n0))
     rx_bits = demod(modulated)
-    return (tx_bits != rx_bits).sum() / len(rx_bits)
+    return (tx_bits[pad_size:-pad_size] != rx_bits[pad_size:-pad_size]).sum() / len(rx_bits)
 
 
 def q(n):
@@ -56,10 +56,13 @@ def plot_single_error_rate(eb_n0s):
     Generate a 10000 random bits and send through a AWGN channel, outputting
     error rate.
     """
-    tx_bits = np.random.randint(0, 2, 10000)
+    PAD_SIZE = 10
+    zero_pad = np.zeros(PAD_SIZE)
+    tx_bits = np.concatenate(
+        (zero_pad, np.random.randint(0, 2, 10000), zero_pad))
     error_rates = []
     for eb_n0 in eb_n0s:
-        error_rates.append(error_rate(tx_bits, eb_n0))
+        error_rates.append(error_rate(tx_bits, eb_n0, PAD_SIZE))
     log_eb_n0 = 10*np.log10(eb_n0s)
     return plt.plot(eb_n0s, np.array(error_rates)*100, "C0")[0]
 

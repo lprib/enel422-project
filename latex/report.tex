@@ -27,6 +27,17 @@
 \input{titlepage.tex}
 \newpage
 \section{Modulation type feasibility}
+All of the modulation types (binary polar, 4-PAM, 8-PAM) would be feasible for
+real-world implementation. Since the bandwidth and power spectrum for each
+modulation type is entirely determined by the pulse shape, each of these
+modulation schemes could be used within the bit rate and spectrum using a the
+pulse shape outlined in \Cref{pulse_shape}. Larger constallation sizes (8-PAM)
+can provide higher data rates over a given bandwith at the expense of a higher
+bit error rate.
+
+Out of these, I would reccommend 8-PAM, because there is no mention of the
+channel noise level. 8-PAM can provide better data rates and/or lower bandwidth
+at the cost of noise susceptibility.
 
 \section{Power spectral density of 4-PAM}\label{rect_psd_section}
 The power spectral density of a pulse-shaped data sequence is given by the
@@ -118,8 +129,11 @@ From \Cref{autocorr}, since $R_n$ is zero for all $n\neq 0$:
     \end{gathered}
 \end{equation}
 
+A flat PSD of 5 has an infinite bandwith, and therefore does not meet the
+bandwidth requirement of 750KHz.
 
-\section{Design of pulse shape}
+
+\section{Design of pulse shape}\label{pulse_shape}
 A raised cosine filter is used for pulse shaping. Choose $B_T = 750KHz$ and
 $\alpha = 1$ so that the filter produces maximum power transfer while staying
 within the bandwidth limit.

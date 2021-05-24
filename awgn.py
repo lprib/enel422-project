@@ -6,10 +6,12 @@ from baseband_tx import *
 from eye_diagram import *
 
 # Energies after TX filter but before RX filter
+# Calculated using sum(|p(x)|^2)
 SYMBOL_ENERGY_IN_CHANNEL = np.sum(np.square(RRCOS_FILTER))
 BIT_ENERGY_IN_CHANNEL = SYMBOL_ENERGY_IN_CHANNEL / np.log2(4)
 
 # Energies after TX and RX filters
+# Calculated using sum(|p(x) conv q(x)|^2)
 SYMBOL_ENERGY_AFTER_RX = np.sum(np.square(RCOS_FILTER))
 BIT_ENERGY_AFTER_RX = SYMBOL_ENERGY_AFTER_RX / np.log2(4)
 
